@@ -1,0 +1,18 @@
+MAC: 0a003ef05227
+Auth key: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+MIR
+Bandwidth Uplink Sustained Rate: 10000
+Bandwidth Uplink Burst Allocation: 500000
+Bandwidth Downlink Sustained Rate: 10000
+Bandwidth Downlink Burst Allocation: 500000
+
+CIR
+Bandwidth Low Priority Uplink CIR: 0
+Bandwidth Low Priority Downlink CIR 0
+Bandwidth High Priority Channel Enable: No
+Bandwdith High Priority Uplink CIR: 0
+Bandwdith High Priority Downlink CIR: 0
+
+VLAN
+Disables
