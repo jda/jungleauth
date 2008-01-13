@@ -1,0 +1,14 @@
+#summary Documents the AP Authentication Protocol.
+#labels Phase-Design
+= Introduction =
+
+This page documents the Motorola Canopy(tm) Access Point Authentication Protocol (APAP).
+
+
+
+= Sample =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
