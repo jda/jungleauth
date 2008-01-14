@@ -2,12 +2,12 @@
 #labels Phase-Design
 = Introduction =
 
-This page documents the Motorola Canopy Access Point Authentication Protocol (APAP).
+This page documents the Access Point Authentication Protocol (APAP) used by the Motorola Canopy wireless system.
 
 The information on this page was deduced by changing settings in Prizm (the standard AP authentication server from Motorola) and using Wireshark to watch network traffic between Prizm and the AP on my test network.
 
 ==Disclaimer==
-This is not an authoritative or authorized specification from Motorola. 
+This is not an authoritative or authorized specification from Motorola. I do not and have never worked for Motorola. I am a happy user of the Canopy Wireless system.
 
 MOTOROLA and the Stylized M Logo are registered in the US Patent & Trademark Office. MOTOwi4 is a trademark and Canopy is a registered trademark of Motorola, Inc.
 
