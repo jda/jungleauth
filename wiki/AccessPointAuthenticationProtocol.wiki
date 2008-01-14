@@ -4,7 +4,7 @@
 
 This page documents the Access Point Authentication Protocol (APAP) used by the Motorola Canopy wireless system.
 
-The information on this page was deduced by changing settings in Prizm (the standard AP authentication server from Motorola) and using Wireshark to watch network traffic between Prizm and the AP on my test network.
+The information on this page was deduced by changing settings in Prizm (the standard AP authentication server from Motorola) and using Wireshark to watch network traffic between Prizm and the AP on my test network. You can read my notes and download the pcap files from my experimentation at http://jungleauth.googlecode.com/svn/trunk/protocol-samples/
 
 ==Disclaimer==
 This is not an authoritative or authorized specification from Motorola. I do not and have never worked for Motorola. I am a happy user of the Canopy Wireless system.
