@@ -6,24 +6,29 @@ This page documents the Access Point Authentication Protocol (APAP) used by the 
 
 The information on this page was deduced by changing settings in Prizm (the standard AP authentication server from Motorola) and using Wireshark to watch network traffic between Prizm and the AP on my test network. You can read my notes and download the pcap files from my experimentation at http://jungleauth.googlecode.com/svn/trunk/protocol-samples/
 
-==Disclaimer==
-This is not an authoritative or authorized specification from Motorola. I do not and have never worked for Motorola. I am a happy user of the Canopy Wireless system.
-
-MOTOROLA and the Stylized M Logo are registered in the US Patent & Trademark Office. MOTOwi4 is a trademark and Canopy is a registered trademark of Motorola, Inc.
-
-Prizm is probably also a trademark of Motorola but I have not found any documents that said so.
-
-
-
-==Definitions==
-
 = Protocol Description =
 
 ==General==
 
+An Access Point sources UDP traffic from port 61001 to port 1234 on the APAS.
+
 ==Access Point Registration==
 
+From AP to APAS, meaning unknown: 
+|| 45000000000000034300000000000000000000000000 ||
+
 ==Subscriber Module Registration==
+From AP to APAS, initial request:
+|| Request num|| SM MAC || AP MAC || Unknown ||
+|| 01 || 0A003EF05227 || 0A003EF0458C || 00040200000000 ||
+
+From APAS to AP:
+|| Unknown || SM MAC || Unknown ||
+|| 2304000000000000000000370000000100000006 || 0a003ef05227 || 0000000300000001000000000400000010000012ec000016fc00006ba200005b600000000000000000 ||
+
+From AP to APAS:
+|| Unknown || SM MAC || Unknown || AP MAC || Unknown ||
+|| 2404000200000000000000560000000100000006 || 0a003ef05227 || 000000060000002000000000000000000000000000000000000000000000000000000000000000000000000200000006 || 0a003ef0458c || 0000000500000006d6bb98d8cb5e00000000 || 
 
 ===Allowed===
 
