@@ -14,8 +14,6 @@ The QoS string defines subscriber provisioning settings in the Canopy system. It
 || Download bucket || || 8 hex digits || ||
 || Future features || Reserved space for future features || 40 zeros (0) || 0000000000000000000000000000000000000000 ||
 
-You get the following QoS string for 7
-
 || Upload speed || Download speed || Upload bucket || Download bucket || Future features ||
 || 0200 || 0300 || 0000 4e200 || 0004 e2000|| 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 ||
 
