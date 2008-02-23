@@ -17,4 +17,4 @@ The QoS string defines subscriber provisioning settings in the Canopy system. It
 || Upload speed || Download speed || Upload bucket || Download bucket || Future features ||
 || 0200 || 0300 || 0000 4e200 || 0004 e2000|| 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 ||
 
-==Version 2 (BAM 2.2)==
+==Version 2 (BAM 2.1)==
