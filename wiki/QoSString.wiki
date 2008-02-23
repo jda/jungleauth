@@ -3,7 +3,7 @@
 = Introduction =
 This page documents the QoS string encoding used by the Motorola Canopy wireless system.
 
-The QoS string is a 64 hex digits long.
+The QoS string defines subscriber provisioning settings in the Canopy system. It is 64 hex digits long.
 
 ==Version 1 (BAM 1.0)==
 
