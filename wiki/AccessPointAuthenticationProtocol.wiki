@@ -10,7 +10,7 @@ The information on this page was deduced by changing settings in Prizm (the stan
 
 ==General==
 
-An Access Point sources UDP traffic from port 61001 to port 1234 on the APAS.
+Communication is via UDP traffic from port 61001 to port 1234.
 
 ==Access Point Registration==
 
