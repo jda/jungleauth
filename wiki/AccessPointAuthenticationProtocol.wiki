@@ -20,19 +20,19 @@ From AP to APAS, meaning unknown:
 ==Subscriber Module Registration==
 [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201.txt BAM config], [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201%20allowed%20try%201.pcap packet capture]
 
-From AP to APAS, initial request:
+===Authentication request from AP to APAS===
 || Unknown || SM MAC || AP MAC || Unknown || LUID || Unknown || Sequence number ||
 || 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 0000 || 0000 ||
 
-From APAS to AP:
+===Challenge from APAS to AP===
 || Unknown || SM MAC || Unknown ||
 || 2304000000000000000000370000000100000006 || 0a003ef05227 || 0000000300000001000000000400000010000012ec000016fc00006ba200005b600000000000000000 ||
 
-From AP to APAS:
+===Challenge response from AP to APAS===
 || Unknown || SM MAC || Unknown || AP MAC || Unknown ||
 || 2404000200000000000000560000000100000006 || 0a003ef05227 || 000000060000002000000000000000000000000000000000000000000000000000000000000000000000000200000006 || 0a003ef0458c || 0000000500000006d6bb98d8cb5e00000000 || 
 
-From APAS to AP:
+===Authentication grant from APAS to AP===
 || Unknown A || SM MAC || Unknown B || Unknown C || QoS preamble || [QoSString QoS string] ||
 || 2504000000000000000000670000000100000006 || 0a003ef05227 || 0000000300000001000000000700000018 || ab8d3702bcc7d757280a7d7848f32e5910bf994e739517c || 60000000600000020 || 008000800007a1200007a12000000000000000000000000000000000000000000000000000000000 ||
 
