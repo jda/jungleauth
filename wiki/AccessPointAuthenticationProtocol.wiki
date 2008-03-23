@@ -21,8 +21,8 @@ From AP to APAS, meaning unknown:
 [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201.txt BAM config], [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201%20allowed%20try%201.pcap packet capture]
 
 From AP to APAS, initial request:
-|| Request num|| SM MAC || AP MAC || Unknown ||
-|| 01 || 0A003EF05227 || 0A003EF0458C || 00040200000000 ||
+|| Unknown || SM MAC || AP MAC || Unknown || LUID || Unknown || Sequence number ||
+|| 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 0000 || 0000 ||
 
 From APAS to AP:
 || Unknown || SM MAC || Unknown ||
