@@ -24,8 +24,8 @@ From AP to APAS, meaning unknown:
 
 ===SM is allowed to register===
 ====Authentication request from AP to APAS====
-|| Unknown || SM MAC || AP MAC || Unknown || LUID || Unknown || Sequence number ||
-|| 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 0000 || 0000 ||
+|| Unknown || SM MAC || AP MAC || Unknown || LUID || Sequence number ||
+|| 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 00000000 ||
 
 ====Challenge from APAS to AP====
 || Unknown || SM MAC || Unknown ||
