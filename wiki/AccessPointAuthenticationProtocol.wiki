@@ -13,6 +13,7 @@ The information on this page was deduced by changing settings in Prizm (the stan
 Communication is via UDP traffic from port 61001 to port 1234.
   * AP: Access Point
   * APAS: Access Point Authentication Server
+  * Hex string, network byte order/high nybble first
 
 ==Access Point Registration==
 
