@@ -22,6 +22,7 @@ From AP to APAS, meaning unknown:
 
 ==Subscriber Module Registration==
 [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201.txt BAM config], [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201%20allowed%20try%201.pcap packet capture]
+  * Access Point will send a registration request every second until a response is received. 
 
 ===SM is allowed to register===
 ====Authentication request from AP to APAS====
@@ -58,6 +59,7 @@ From AP to APAS:
 || 4600000000000004 ||
 
 ===SM is not allowed to register===
+  * Access Point will retry authentication after several minutes (exponential backoff?)
 ====Authentication request from AP to APAS====
 || Unknown || SM MAC || AP MAC || Unknown || LUID || Sequence number ||
 || 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 00000000 ||
