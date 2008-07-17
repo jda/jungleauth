@@ -1,5 +1,5 @@
 #summary Describes the format of the QoS string encoding used for AP communication
-#labels Phase-Requirements
+#labels Phase-Requirements,APAS-Protocol
 = Introduction =
 This page documents the QoS string encoding used by the Motorola Canopy wireless system.
 
