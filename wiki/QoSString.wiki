@@ -10,8 +10,8 @@ The QoS string defines subscriber provisioning settings in the Canopy system. It
 || *Field* || *Description* || *Format* || *Example* ||
 || Upload speed || Upload speed in Kbps || 4 hex digits || 512 Kbps -> 0200 || 
 || Download speed || Download speed in Kbps || 4 hex digits || 768 Kbps -> 0300 ||
-|| Upload bucket || || 8 hex digits || ||
-|| Download bucket || || 8 hex digits || ||
+|| Upload bucket || Bucket size in Kb || 8 hex digits || 320000 Kb -> 00004e200 ||
+|| Download bucket || Bucket size in Kb || 8 hex digits || 5120000 Kb -> 0004e2000||
 || Future features || Reserved space for future features || 40 zeros (0) || 0000000000000000000000000000000000000000 ||
 
 || Upload speed || Download speed || Upload bucket || Download bucket || Future features ||
