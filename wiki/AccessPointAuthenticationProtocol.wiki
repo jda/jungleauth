@@ -26,8 +26,8 @@ From AP to APAS, meaning unknown:
 
 ===SM is allowed to register===
 ====Authentication request from AP to APAS====
-|| Unknown || SM MAC || AP MAC || Unknown || LUID || Sequence number ||
-|| 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 00000000 ||
+|| Unknown || SM MAC || AP MAC || Unknown || LUID || Unknown || Sequence number ||
+|| 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 0000 || 0000 ||
 
 ====Challenge from APAS to AP====
 || Unknown || SM MAC || Unknown ||
@@ -58,7 +58,7 @@ From AP to APAS:
 || Unknown ||
 || 4600000000000004 ||
 
-===SM is not allowed to register===
+===Subscriber Module is not allowed to register===
   * Access Point will retry authentication after several minutes (exponential backoff?)
 ====Authentication request from AP to APAS====
 || Unknown || SM MAC || AP MAC || Unknown || LUID || Sequence number ||
@@ -66,7 +66,7 @@ From AP to APAS:
 
 ====Rejection response from APAS to AP====
 || Unknown || Sequence number || Unknown || SM MAC || Unknown ||
-||  23040000 || 00000004 || 000000370000000100000006 || 0a003ef05227 || 0000000300000001010000000400000010000000000000000000000000000000000000000000000000 ||
+||  230400000000|| 0004 || 000000370000000100000006 || 0a003ef05227 || 0000000300000001010000000400000010000000000000000000000000000000000000000000000000 ||
 
 ==Subscriber Module Disconnection==
 
