@@ -59,7 +59,7 @@ From AP to APAS:
 || 4600000000000004 ||
 
 ===Subscriber Module is not allowed to register===
-  * Access Point will retry authentication after several minutes (exponential backoff?)
+  * Access Point will retry authentication every 15 minutes.
 ====Authentication request from AP to APAS====
 || Unknown || SM MAC || AP MAC || Unknown || LUID || Sequence number ||
 || 01 || 0A003EF05227 || 0A003EF0458C || 0004 || 02 || 00000000 ||
