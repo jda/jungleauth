@@ -23,6 +23,7 @@ From AP to APAS, meaning unknown:
 ==Subscriber Module Registration==
 [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201.txt BAM config], [http://jungleauth.googlecode.com/svn/trunk/protocol-samples/sm%20config%201%20allowed%20try%201.pcap packet capture]
   * Access Point will send a registration request every second until a response is received. 
+[http://jungleauth.googlecode.com/svn/trunk/docs/skipchallenge.png]
 
 ===SM is allowed to register===
 ====Authentication request from AP to APAS====
