@@ -2,13 +2,30 @@
 #labels Phase-Design
 = Introduction =
 
-JungleAuth uses MySQL to store subscriber and rateplan information. This document describes the JungleAuth SQL Database schema.
+JungleAuth uses MySQL to store subscriber and rateplan information. This document describes the JungleAuth Database schema.
 
 = Schema =
 == accesspoints ==
+JungleAuth will only respond to a request from a AP if the source IP and AP MAC address match what is recorded in this table.
+
+|| *Key* || *Name* || *Type* || *Description* ||
 
 == accessgroups ==
+Access groups are used restrict a rateplan or radio to a specific set of APs. This table holds access group definitions.
+
+|| *Key* || *Name* || *Type* || *Description* ||
+
+==accessgroupaps==
+This table tracks AP membership in access groups.
+
+|| *Key* || *Name* || *Type* || *Description* ||
 
 == rateplans ==
+A rate plan is a collection of bandwidth management and radio configuration parameters. A radio may be assigned to one rateplan at a time.
+
+|| *Key* || *Name* || *Type* || *Description* ||
 
 == radioconfigs ==
+This table lists radios that are allowed on the network, which rate they should be assigned, which access group (if any) they are in, and which VLAN (if any) they should be assigned.
+
+|| *Key* || *Name* || *Type* || *Description* ||
