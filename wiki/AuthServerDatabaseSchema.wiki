@@ -9,16 +9,64 @@ JungleAuth uses MySQL to store subscriber and rateplan information. This documen
 JungleAuth will only respond to a request from a AP if the source IP and AP MAC address match what is recorded in this table.
 
 || *Key* || *Name* || *Type* || *Description* ||
+|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
+|| || macaddr || char(12) || AP MAC address ||
+|| || ipaddr || chat(15) || AP management IP address ||
+|| || descr || text || Friendly name / hostname ||
+
+{{{
+ CREATE TABLE `jungleauth`.`accesspoints` (
+`id` INT NOT NULL AUTO_INCREMENT ,
+`macaddr` VARCHAR( 12 ) NOT NULL ,
+`ipaddr` VARCHAR( 15 ) NOT NULL ,
+`descr` TEXT NOT NULL ,
+PRIMARY KEY ( `id` ) ,
+UNIQUE (
+`macaddr` ,
+`ipaddr`
+)
+) ENGINE = InnoDB 
+}}}
+
 
 == accessgroups ==
 Access groups are used restrict a rateplan or radio to a specific set of APs. This table holds access group definitions.
 
 || *Key* || *Name* || *Type* || *Description* ||
+|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
+|| || name || char(20) || short name ||
+|| || descr || text || group description ||
+
+{{{
+ CREATE TABLE `jungleauth`.`accessgroups` (
+`id` INT NOT NULL AUTO_INCREMENT ,
+`name` VARCHAR( 12 ) NOT NULL ,
+`descr` TEXT NOT NULL ,
+PRIMARY KEY ( `id` ) ,
+UNIQUE (
+`name`
+)
+) ENGINE = InnoDB 
+}}}
 
 ==accessgroupaps==
 This table tracks AP membership in access groups.
 
 || *Key* || *Name* || *Type* || *Description* ||
+|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
+|| _FK_ || groupid || int(11) || accessgroups.id of group that contains AP||
+|| _FK_ || apid || int(11) || accesspoints.id AP that belongs to group.||
+
+{{{
+ CREATE TABLE `jungleauth`.`accessgroupaps` (
+`id` INT NOT NULL AUTO_INCREMENT ,
+`groupid` INT NOT NULL ,
+`apid` INT NOT NULL ,
+PRIMARY KEY ( `id` )
+) ENGINE = InnoDB 
+}}}
+
+TODO: Show MySQL foreign key relationship setup.
 
 == rateplans ==
 A rate plan is a collection of bandwidth management and radio configuration parameters. A radio may be assigned to one rateplan at a time.
