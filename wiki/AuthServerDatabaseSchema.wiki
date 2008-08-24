@@ -5,10 +5,10 @@
 JungleAuth uses MySQL to store subscriber and rateplan information. This document describes the JungleAuth SQL Database schema.
 
 = Schema =
-== AccessPoints ==
+== accesspoints ==
 
-== AccessGroups ==
+== accessgroups ==
 
-== RatePlans ==
+== rateplans ==
 
-== RadioConfig ==
+== radioconfigs ==
