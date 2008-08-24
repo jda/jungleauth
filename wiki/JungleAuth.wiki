@@ -1,4 +1,0 @@
-#summary Description of JungleAuth
-#labels Phase-Requirements
-
-Jungle Auth aims to provide a Open AP authentication server for the Canopy wireless system.
