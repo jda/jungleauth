@@ -1,9 +1,0 @@
-#summary AuthServer - Describes jungleauth server.
-#labels Phase-Requirements
-
-= Introduction =
-
-= Installation =
-
-=See also=
-* AuthServerDatabaseSchema
