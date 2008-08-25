@@ -3,25 +3,17 @@ package Net::Canopy::BAM;
 use 5.008008;
 use strict;
 use warnings;
+use Bit::Vector;
+
+use Data::Dumper;
 
 require Exporter;
-use AutoLoader qw(AUTOLOAD);
 
-our @ISA = qw(Exporter);
 our $VERSION = '0.01';
-
-sub new {
-
-}
-
-
-
-1;
-__END__
 
 =head1 NAME
 
-Net::Canopy::BAM - Interact with Motorola Canopy Bandwidth Authentication Manager
+Net::Canopy::BAM - Identifies, assembles, and disassembles Canopy BAM packets.
 
 =head1 SYNOPSIS
 
@@ -29,12 +21,215 @@ Net::Canopy::BAM - Interact with Motorola Canopy Bandwidth Authentication Manage
 
 =head1 DESCRIPTION
 
-Common Packet Assembly, Disassembly, and Identification  for 
-L<Net::Canopy::BAM::Client> and L<Net::Canopy::BAM::Server>. 
+Common Packet Assembly, Disassembly, and Identification  for the JungleAuth 
+(http://code.google.com/p/jungleauth/) implementation of Canopy BAM.
+
+Also provides a BAM test client.
 
 =head1 METHODS
 
-None.
+=head3 new
+
+	my $ncb = Net::Canopy::BAM->new();
+	
+Instantiates Net::Canopy::BAM.
+
+=cut
+
+sub new {
+	my $invocant = shift;
+	my $class = ref($invocant) || $invocant;
+	
+	my $self = {
+		@_	
+	};
+	
+	return bless $self, $class;
+}
+
+
+=head3 buildQstr
+
+	my $QoSstr = $ncb->buildQstr(
+		upspeed => 512,         # Upload speed in Kbps
+		downspeed => 1024,      # Download speed in Kbps
+		upbucket => 320000,   # Upload bucket size in Kb
+		downbucket => 5120000 # Download bucket size in Kb
+	);
+	
+Builds a QoS string. 
+
+=cut
+
+# Take hash of QoS settings and return formatted qosstr
+sub buildQstr {
+	my ($class, %args) = @_;
+	my $tailpad = "0000000000000000000000000000000000000000";
+	
+	my $upspeed = Bit::Vector->new_Dec(16, $args{upspeed});
+	$upspeed = $upspeed->to_Hex();
+	
+	my $downspeed = Bit::Vector->new_Dec(16, $args{downspeed});
+	$downspeed = $downspeed->to_Hex();
+	
+	my $upbucket = Bit::Vector->new_Dec(32, $args{upbucket});
+	$upbucket = $upbucket->to_Hex();
+	
+	my $downbucket = Bit::Vector->new_Dec(32, $args{downbucket});
+	$downbucket = $downbucket->to_Hex();
+	
+	my $qstr = $upspeed . $downspeed . $upbucket . $downbucket . $tailpad;
+	
+	return $qstr;
+}
+
+=head3 parseQstr
+
+	my $QoShash = $ncb->parseQstr(qstr => $qosstring);
+
+Reads a QoS string and returns its component values as a hashref
+
+=cut
+
+# Return hash of QoS str values
+sub parseQstr {
+	my ($class, %args) = @_;
+	my %qhash=();
+	
+	my $upspeed = hex(substr($args{qstr}, 0, 4));
+		
+	my $downspeed = hex(substr($args{qstr}, 4, 4));
+	my $upbucket = hex(substr($args{qstr}, 8, 8));
+	my $downbucket = hex(substr($args{qstr}, 16, 8));
+	
+	%qhash = (
+		'upspeed', $upspeed, 
+		'downspeed', $downspeed,
+		'upbucket', $upbucket, 
+		'downbucket', $downbucket
+	);
+	
+	return \%qhash;
+}
+
+=head3 idPacket
+
+	my $packetID = $ncb->idPacket(packet => $packet);
+	
+Returns the type of BAM packet. 
+
+=cut
+
+# Return type of packet recieved
+sub idPacket {
+
+}
+
+=head3 mkAcceptPacket
+
+	my $packet = $ncb->mkAcceptPacket(
+		seq => $sequenceNumber.
+		mac => $smMAC,
+		qos => $QoSstr
+	);
+	
+Returns a authentication acceptance packet
+
+=cut
+# Assemble accept packet
+sub mkAcceptPacket {
+	my ($class, %args) = @_;
+	my $magic1 = "2504000000000000000000670000000100000006";
+	my $magic2 = "0000000300000001000000000700000018";
+	my $magic3 = "ab8d3702bcc7d757280a7d7848f32e5910bf994e739517c";
+	my $qosPre = "60000000600000020";
+	my $qosPost = "0000000000000000";
+	
+	my $packet = $magic1 . $args{mac} . $magic2 . $magic3 . $qosPre . 
+		$args{qos} . $qosPost;
+	$packet = pack('H*', $packet);
+	
+	return $packet;
+}
+
+=head3 mkRejectPacket
+
+	my $packet = $ncb->mkRejectPacket(
+		seq => $sequenceNumber,
+		mac => $smMAC
+	);
+
+Returns a rejection response packet.
+	
+=cut
+
+# Assemble reject packet
+sub mkRejectPacket {
+	my ($class, %args) = @_;
+
+	my $magic1 = "230400000000";
+	my $magic2 = "000000370000000100000006";
+	my $magic3 = "0000000300000001010000000400000010000000000000000000000000000000000000000000000000";
+	
+	my $seq = sprintf("%04d", $args{seq});
+	
+	my $packet = $magic1 . $seq . $magic2 . $args{mac} . $magic3;
+	$packet = pack('H*', $packet);
+	
+	return $packet;
+}
+
+=head3 parsePacket
+
+	my $parsedPacket = $ncb->parsePacket(packet => $packet);
+
+Identify packet and parse out data. Returns packet type and data as hashref
+
+=cut
+
+sub parsePacket {
+	my ($class, %args) = @_;
+	my %pinfo = ();
+		
+	my $packet = unpack('H*', $args{packet});
+	my $type = substr($packet, 0, 2);
+	
+	if ($type eq '01') { # Auth request
+		$pinfo{'type'} = 'authreq';
+		
+		$pinfo{'sm'} = substr($packet, 2, 12);
+		$pinfo{'ap'} = substr($packet, 14, 12);
+		$pinfo{'luid'} = hex(substr($packet, 30, 2));
+		$pinfo{'seq'} = hex(substr($packet, 36, 4));
+			
+	} elsif ($type eq '23') { # Auth Challange APAS->AP or Rejection APAS->AP
+		$pinfo{'type'} = 'authchal-1';
+		
+	} elsif ($type eq '24') { # Auth Challange AP->APAS
+		$pinfo{'type'} = 'authchal-2';
+		
+	} elsif ($type eq '25') { # Auth grant
+		$pinfo{'type'} = 'authgrant';
+		
+	} elsif ($type eq '45') { # Unknown
+		$pinfo{'type'} = 'unknown-45';
+		
+		$pinfo{'magic1'} = substr($packet, 0, 24);
+		$pinfo{'sm'} = substr($packet, 24, 12);
+		$pinfo{'magic2'} = substr($packet, 36, 214);
+		
+	} elsif ($type eq '46') { # Unknown
+		$pinfo{'type'} = 'unknown-46';
+		
+	} else {
+		print "Unknown packet: $packet\n";	
+	}
+	
+	return \%pinfo;
+}
+
+1;
+__END__
 
 =head1 SEE ALSO
 
