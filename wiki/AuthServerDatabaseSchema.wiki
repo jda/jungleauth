@@ -10,8 +10,8 @@ JungleAuth will only respond to a request from a AP if the source IP and AP MAC 
 
 || *Key* || *Name* || *Type* || *Description* ||
 || _PK_ || id || int(11) || Internal ID number. Auto incerments ||
-|| || macaddr || char(12) || AP MAC address ||
-|| || ipaddr || chat(15) || AP management IP address ||
+|| || macaddr || varchar(12) || AP MAC address ||
+|| || ipaddr || varchat(15) || AP management IP address ||
 || || descr || text || Friendly name / hostname ||
 
 {{{
@@ -34,7 +34,7 @@ Access groups are used restrict a rateplan or radio to a specific set of APs. Th
 
 || *Key* || *Name* || *Type* || *Description* ||
 || _PK_ || id || int(11) || Internal ID number. Auto incerments ||
-|| || name || char(20) || short name ||
+|| || name || varchar(20) || short name ||
 || || descr || text || group description ||
 
 {{{
@@ -62,18 +62,57 @@ This table tracks AP membership in access groups.
 `id` INT NOT NULL AUTO_INCREMENT ,
 `groupid` INT NOT NULL ,
 `apid` INT NOT NULL ,
+INDEX groupid_index( groupid ) ,
+INDEX apid_index( apid ) ,
+FOREIGN KEY ( groupid ) REFERENCES accessgroups( id ) ON DELETE RESTRICT ON UPDATE CASCADE ,
+FOREIGN KEY ( apid ) REFERENCES accesspoints( id ) ON DELETE RESTRICT ON UPDATE CASCADE ,
 PRIMARY KEY ( `id` )
 ) ENGINE = InnoDB 
 }}}
 
-TODO: Show MySQL foreign key relationship setup.
-
 == rateplans ==
-A rate plan is a collection of bandwidth management and radio configuration parameters. A radio may be assigned to one rateplan at a time.
+A rate plan is a collection of bandwidth management parameters. A radio may be assigned to one rateplan at a time.
 
 || *Key* || *Name* || *Type* || *Description* ||
+|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
+|| ||name || varchar(20) || short name||
+|| ||descr|| text || description ||
+|| || accessgroup || int(11) || Access group to require, if any. Default is NULL ||
+|| || upspeed || int(5) || Upload speed in Kbps ||
+|| || downspeed || int(5) || Download speed in Kbps ||
+|| || upbucket || int(10) || Upload bucket size in Kb ||
+|| || downbucket || int(10) || Download bucket size in Kb ||
+
+{{{
+ CREATE TABLE `jungleauth`.`rateplans` (
+`id` INT NOT NULL AUTO_INCREMENT ,
+`name` VARCHAR( 20 ) NOT NULL ,
+`descr` TEXT NOT NULL ,
+`accessgroup` INT( 11 ) NULL ,
+`upspeed` INT( 5 ) NOT NULL ,
+`downspeed` INT( 5 ) NOT NULL ,
+`upbucket` INT( 10 ) NOT NULL ,
+`downbucket` INT( 10 ) NOT NULL ,
+PRIMARY KEY ( `id` )
+) ENGINE = InnoDB 
+}}}
 
 == radioconfigs ==
-This table lists radios that are allowed on the network, which rate they should be assigned, which access group (if any) they are in, and which VLAN (if any) they should be assigned.
+This table lists radios that are allowed on the network, which rate they should be assigned, which access group (if any) they are in.
 
 || *Key* || *Name* || *Type* || *Description* ||
+|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
+|| || mac || varchar(12) || SM MAC address ||
+|| || rateplan || int(11) || rateplans.id of rate that SM is assigned to use ||
+
+{{{
+ CREATE TABLE `jungleauth`.`radioconfigs` (
+`id` INT( 11 ) NOT NULL AUTO_INCREMENT ,
+`mac` VARCHAR( 12 ) NOT NULL ,
+`rateplan` INT( 11 ) NOT NULL ,
+PRIMARY KEY ( `id` ) ,
+INDEX rateplan_index( `rateplan` ) ,
+INDEX mac_index( mac ) ,
+FOREIGN KEY ( rateplan ) REFERENCES rateplans( id ) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE = InnoDB 
+}}}
