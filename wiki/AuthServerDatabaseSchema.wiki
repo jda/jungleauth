@@ -2,7 +2,7 @@
 #labels Phase-Design
 = Introduction =
 
-JungleAuth uses MySQL to store subscriber and rateplan information. This document describes the JungleAuth Database schema.
+Jungle Auth uses MySQL to store subscriber and rateplan information. This is the database schema for storing that information.
 
 = Schema =
 == accesspoints ==
