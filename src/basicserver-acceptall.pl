@@ -33,7 +33,8 @@ while (1) {
 		    seq => $data->{seq},
 		    mac => $data->{sm},
 		    qos => $qos);
-    
+	    print unpack('H*', $resp) . "\n";
+	    
 	    my $respsock = new IO::Socket::INET->new(
 		    PeerPort => 61001, 
 		    Proto => 'udp',
@@ -46,6 +47,8 @@ while (1) {
 		    mac => $data->{sm},
 		    qos => $qos);
     
+	    print unpack('H*', $resp) . "\n";
+	    
 	    my $respsock = new IO::Socket::INET->new(
 		    PeerPort => 61001, 
 		    Proto => 'udp',
