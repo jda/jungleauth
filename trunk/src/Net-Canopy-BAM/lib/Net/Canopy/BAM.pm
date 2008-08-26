@@ -139,13 +139,16 @@ Returns a authentication acceptance packet
 # Assemble accept packet
 sub mkAcceptPacket {
 	my ($class, %args) = @_;
-	my $magic1 = "2504000000000000000000670000000100000006";
-	my $magic2 = "0000000300000001000000000700000018";
-	my $magic3 = "ab8d3702bcc7d757280a7d7848f32e5910bf994e739517c";
+	my $magic1 = "250400000000";
+	my $magic2 = "000000670000000100000006";
+	my $magic3 = "0000000300000001000000000700000018";
+	my $magic4 = "ab8d3702bcc7d757280a7d7848f32e5910bf994e739517c";
 	my $qosPre = "60000000600000020";
 	my $qosPost = "0000000000000000";
 	
-	my $packet = $magic1 . $args{mac} . $magic2 . $magic3 . $qosPre . 
+	my $seq = sprintf("%04d", $args{seq});
+	
+	my $packet = $magic1 . $seq . $magic2 . $args{mac} . $magic3 . $magic4 . $qosPre . 
 		$args{qos} . $qosPost;
 	$packet = pack('H*', $packet);
 	
