@@ -10,7 +10,7 @@ The information on this page was deduced by changing settings in Prizm (the stan
 
 ==General==
 
-Communication is via UDP traffic from port 61001 to port 1234.
+Communication is via UDP traffic. The AP sends and listens on port 61001. The APAS sends and listens on port 1234.
   * AP: Access Point
   * APAS: Access Point Authentication Server
   * Hex string, network byte order/high nybble first
