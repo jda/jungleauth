@@ -49,12 +49,7 @@ while (1) {
     
 	    print unpack('H*', $resp) . "\n";
 	    
-	    my $respsock = new IO::Socket::INET->new(
-		    PeerPort => 61001, 
-		    Proto => 'udp',
-		    PeerAddr => $apIP,
-		    LocalPort => 61001) or die "$@\n";
-	    $respsock->send($resp);
+	    $bamsock->send($resp);
     } else {
 	print Dumper($data);    
     }
