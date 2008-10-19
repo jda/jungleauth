@@ -1,0 +1,16 @@
+#summary instructions for minimal working release 1
+#labels Phase-Support
+= Introduction =
+
+
+=Requirements=
+  * Perl 5.8
+  * The following perl modules (some should be included with your perl, others will need to be installed from cpan)
+    * Bit::Vector
+    * Data::Dumper
+    * IO::Socket::INET
+    * Getopt::Long
+    * Text::CSV
+
+=Setup Walkthrough=
+
