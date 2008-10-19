@@ -6,10 +6,10 @@ use strict;
 
 use IO::Socket::INET;
 use Net::Canopy::BAM;
-use Net::MAC;
+#use Net::MAC;
 use Getopt::Long;
 use Text::CSV;
-use Data::Dumper;
+#use Data::Dumper;
 
 my $version = "0.1";
 my $ncb = Net::Canopy::BAM->new();
@@ -73,7 +73,7 @@ while (1) {
   if ($data ne '') {
     # Show request
     my $data = $ncb->parsePacket(packet=>$data);
-    print Dumper($data); 
+    #print Dumper($data); 
     my $apIP = $bamsock->peerhost();
     
     if ($data->{type} eq 'authreq') {
