@@ -1,7 +1,7 @@
 #summary instructions for minimal working release 1
 #labels Phase-Support
 = Introduction =
-
+Basic instructions for the Minimal Working Release #1 of Jungleauth.
 
 =Requirements=
   * Perl 5.8
@@ -13,4 +13,16 @@
     * Text::CSV
 
 =Setup Walkthrough=
+_Note: this starts after you install the perl modules_
 
+{{{
+YANIMB2C-2:tmp jda$ cd /tmp
+YANIMB2C-2:tmp jda$ wget http://jungleauth.googlecode.com/files/jungleauth-0.01.tar.gz
+YANIMB2C-2:tmp jda$ tar -xzf jungleauth-0.01.tar.gz 
+YANIMB2C-2:tmp jda$ cd jungleauth/src/Net-Canopy-BAM 
+YANIMB2C-2:Net-Canopy-BAM jda$ perl Makefile.PL 
+YANIMB2C-2:Net-Canopy-BAM jda$ sudo make install
+YANIMB2C-2:Net-Canopy-BAM jda$ cd ..
+YANIMB2C-2:src jda$ perl csvserver.pl -h
+YANIMB2C-2:src jda$ sudo perl csvserver.pl --smlist /home/jda/testsmlist.csv
+}}}
