@@ -49,12 +49,9 @@ while (1) {
 
     # Format and send response
     $resp = pack('H*', $resp);
-    my $respsock = new IO::Socket::INET->new(
-      PeerPort => 61001, 
-      Proto => 'udp',
-      PeerAddr => $apIP,
-      LocalPort => 61001) or die "$@\n";
-    $respsock->send($resp);
+    $bamsock->send($resp);
+    $bamsock->send($resp);
+    $bamsock->send($resp);
   }
 }
 
