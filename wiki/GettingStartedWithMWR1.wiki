@@ -3,6 +3,14 @@
 = Introduction =
 Basic instructions for the Minimal Working Release #1 of Jungleauth.
 
+MWR1 includes a perl library (Net::Canopy::BAM) for parsing and identifying BAM packets. It also includes a very basic BAM server, csvserver.pl. 
+
+csvserver.pl uses a csv file as the SM database. Example CSV file:
+{{{
+0a003e903575,1544,640,51200,15360
+0a003e90e6f8,768,768,768,768
+}}}
+
 =Requirements=
   * Perl 5.8
   * The following perl modules (some should be included with your perl, others will need to be installed from cpan)
