@@ -15,6 +15,10 @@ Communication is via UDP traffic. The AP sends and listens on port 61001. The AP
   * APAS: Access Point Authentication Server
   * Hex string, network byte order/high nybble first
 
+==Caveats==
+  * Airlink encryption is not supported. Something is different in the protocol and we don't account for it at the moment.
+  * SM side authentication key is not accounted for either.
+
 ==Access Point Registration==
 
 From AP to APAS, meaning unknown: 
