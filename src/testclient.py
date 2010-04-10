@@ -15,10 +15,31 @@
 #  limitations under the License.
 #
 
-import socket, sys
+import socket, sys, datetime, binascii
 
-def beClient():
-  pass
+def phase1req(sm, ap, luid, sequence=0):
+  magic1 = 1
+  magic2 = 4
+  magic3 = 0
+
+  # magic1 sm ap magic2 luid magic3 sequence 
+  return "%02X%s%s%04X%02X%04X%04X" % (magic1, sm, ap, magic2, luid, magic3, sequence)
+
+def beClient(server, mac, timeout=15, localip='0.0.0.0', localmac="0a003edeadbe"):
+  localport = 61001
+
+  sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  sock.bind((localip, localport))
+
+  # fixme: following is converting hex to some other representation before sending
+  # which won't work
+  sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2)), (server, 1234))
+
+  while True:
+    data, addr = sock.recvfrom(1024)
+    print "Got ", data
+
+  sock.close()
 
 if __name__ == '__main__':
   try:
@@ -27,6 +48,6 @@ if __name__ == '__main__':
   except IndexError:
     print "Usage: %s AuthServerAddress ClientMACAddress" % (sys.argv[0])
     sys.exit(1)
-  bsClient()
+  beClient(authserver, clientmac)
 
 
