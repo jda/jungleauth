@@ -15,7 +15,11 @@
 #  limitations under the License.
 #
 
-import socket, sys, datetime, binascii
+import socket, sys, time, select, binascii
+
+def apOnline():
+  magic1 = "45000000000000034300000000000000000000000000"
+  return magic1
 
 def phase1req(sm, ap, luid, sequence=0):
   magic1 = 1
@@ -25,19 +29,36 @@ def phase1req(sm, ap, luid, sequence=0):
   # magic1 sm ap magic2 luid magic3 sequence 
   return "%02X%s%s%04X%02X%04X%04X" % (magic1, sm, ap, magic2, luid, magic3, sequence)
 
+def parseReply(msg):
+  #print msg
+  part1 = msg[0:40]
+  part2 = msg[40:52]
+  part3 = msg[52:86]
+  part4 = msg[86:118]
+  part5 = msg[118:]
+  
+  print "%s %s %s %s %s" % (part1, part2, part3, part4, part5)
+
 def beClient(server, mac, timeout=15, localip='0.0.0.0', localmac="0a003edeadbe"):
+  endTime = time.time() + timeout
   localport = 61001
+  apas = (server, 1234)
 
   sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
   sock.bind((localip, localport))
 
-  # fixme: following is converting hex to some other representation before sending
-  # which won't work
-  sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2)), (server, 1234))
+  #sock.sendto(binascii.unhexlify(apOnline()), apas)
+  for i in range(0,5):
+    sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2)), apas)
 
-  while True:
-    data, addr = sock.recvfrom(1024)
-    print "Got ", data
+  while (time.time() <= endTime):
+    #print "in loop at %s" % (time.time())
+    rlist, wlist, xlist = select.select([sock], [], [], 0.1)
+
+    for s in rlist:
+      data, addr = sock.recvfrom(1024)
+      #print binascii.hexlify(data)
+      parseReply(binascii.hexlify(data))
 
   sock.close()
 
@@ -48,6 +69,6 @@ if __name__ == '__main__':
   except IndexError:
     print "Usage: %s AuthServerAddress ClientMACAddress" % (sys.argv[0])
     sys.exit(1)
-  beClient(authserver, clientmac)
+  beClient(authserver, clientmac, timeout=3)
 
 
