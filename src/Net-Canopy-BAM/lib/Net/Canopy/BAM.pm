@@ -163,7 +163,7 @@ sub mkAcceptPacket {
 	);
 
 Returns a rejection response packet.
-	
+
 =cut
 
 # Assemble reject packet
