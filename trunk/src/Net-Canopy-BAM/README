@@ -1,4 +1,4 @@
-Net-Canopy-BAM version 0.01
+Net-Canopy-BAM version 0.02
 ===========================
 Net::Canopy::BAM identifies, assembles, and disassembles BAM 
 packets.
@@ -14,7 +14,7 @@ To install this module type the following:
 
 COPYRIGHT AND LICENCE
 
-Copyright 2008 Jonathan Auer
+Copyright 2010 Jonathan Auer
   
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

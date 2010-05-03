@@ -9,7 +9,7 @@ use Data::Dumper;
 
 require Exporter;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 NAME
 
@@ -146,7 +146,7 @@ sub mkAcceptPacket {
 	my $qosPre = "60000000600000020";
 	my $qosPost = "0000000000000000";
 	
-	my $seq = sprintf("%04d", $args{seq});
+	my $seq = sprintf("%04x", $args{seq});
 	
 	my $packet = $magic1 . $seq . $magic2 . $args{mac} . $magic3 . $magic4 . $qosPre . 
 		$args{qos} . $qosPost;
@@ -174,7 +174,7 @@ sub mkRejectPacket {
 	my $magic2 = "000000370000000100000006";
 	my $magic3 = "0000000300000001010000000400000010000000000000000000000000000000000000000000000000";
 	
-	my $seq = sprintf("%04d", $args{seq});
+	my $seq = sprintf("%04x", $args{seq});
 	
 	my $packet = $magic1 . $seq . $magic2 . $args{mac} . $magic3;
 	$packet = pack('H*', $packet);

@@ -1,5 +1,10 @@
 Revision history for Perl extension Net::Canopy::BAM.
 
+0.02  Mon May 03 00:36:32 2010
+  - Fixed improper formatting of sequence number as decimal
+    instead of hex number. Thanks to newkirk.us for 
+    spotting this bug and providing the fix.
+
 0.01  Fri Jul 18 23:21:44 2008
 	- original version; created by h2xs 1.23 with options
 		-X Net::Canopy::BAM
