@@ -1,5 +1,9 @@
 Revision history for Perl extension Net::Canopy::BAM.
 
+0.03 Mon May 03 11:34:52 2010
+ - Forgot to specify required libraries in Makefile.PL.
+   This triggered warnings from CPAN autotester.
+
 0.02  Mon May 03 00:36:32 2010
   - Fixed improper formatting of sequence number as decimal
     instead of hex number. Thanks to newkirk.us for 
