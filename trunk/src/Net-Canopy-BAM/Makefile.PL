@@ -5,7 +5,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     NAME              => 'Net::Canopy::BAM',
     VERSION_FROM      => 'lib/Net/Canopy/BAM.pm', # finds $VERSION
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
+    PREREQ_PM         => {'Bit::Vector' => 7.1, 'Data::Dumper' => 0},
     ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
       (ABSTRACT_FROM  => 'lib/Net/Canopy/BAM.pm', # retrieve abstract from module
        AUTHOR         => 'Jonathan Auer <jda@tapodi.net>') : ()),
