@@ -27,7 +27,8 @@ def phase1req(sm, ap, luid, sequence=0):
   magic3 = 0
 
   # magic1 sm ap magic2 luid magic3 sequence 
-  return "%02X%s%s%04X%02X%04X%04X" % (magic1, sm, ap, magic2, luid, magic3, sequence)
+  #return "%02X%s%s%04X%02X%04X%04X" % (magic1, sm, ap, magic2, luid, magic3, sequence)
+  return "%02X%s%s%04X%02X%08X" % (magic1, sm, ap, magic2, luid, sequence)
 
 def parseReply(msg):
   #print msg
@@ -48,12 +49,18 @@ def beClient(server, mac, timeout=15, localip='0.0.0.0', localmac="0a003edeadbe"
   sock.bind((localip, localport))
 
   #sock.sendto(binascii.unhexlify(apOnline()), apas)
-  for i in range(0,5):
-    sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2)), apas)
 
+  # Need to explore sequence numbers. How high can we go and get resp from BAM?
+  # that will show us field size...
+  #for i in range(0,5):
+  sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2, sequence=0)), apas)
+
+  seq = 1
   while (time.time() <= endTime):
     #print "in loop at %s" % (time.time())
     rlist, wlist, xlist = select.select([sock], [], [], 0.1)
+    sock.sendto(binascii.unhexlify(phase1req(mac, localmac, 2, sequence=seq)), apas)
+    seq += 1
 
     for s in rlist:
       data, addr = sock.recvfrom(1024)
@@ -69,6 +76,6 @@ if __name__ == '__main__':
   except IndexError:
     print "Usage: %s AuthServerAddress ClientMACAddress" % (sys.argv[0])
     sys.exit(1)
-  beClient(authserver, clientmac, timeout=3)
+  beClient(authserver, clientmac, timeout=18000)
 
 
