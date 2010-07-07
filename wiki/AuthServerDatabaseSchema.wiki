@@ -4,7 +4,10 @@
 
 Jungle Auth uses MySQL to store subscriber and rateplan information. This is the database schema for storing that information.
 
-= Schema =
+2 Schemas are provided, one each for authentication and logging. 
+Jungle Auth should only have read access to the authentication database. This is so you can use MySQL replication to have multiple database and Jungle Auth servers for redundancy.
+
+= Schema for authentication database =
 == accesspoints ==
 JungleAuth will only respond to a request from a AP if the source IP and AP MAC address match what is recorded in this table.
 
@@ -78,3 +81,5 @@ INDEX mac_index( mac ) ,
 FOREIGN KEY ( rateplan ) REFERENCES rateplans( id ) ON DELETE RESTRICT ON UPDATE CASCADE
 ) ENGINE = InnoDB 
 }}}
+
+= Schema for logging database =
