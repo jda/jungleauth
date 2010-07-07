@@ -63,7 +63,7 @@ PRIMARY KEY ( `id` )
 }}}
 
 == radios ==
-This table lists radios that are allowed on the network, which rate they should be assigned, which access group (if any) they are in.
+This table lists radios that are allowed on the network and which rate they should be assigned..
 
 || *Key* || *Name* || *Type* || *Description* ||
 || _PK_ || id || int(11) || Internal ID number. Auto incerments ||
