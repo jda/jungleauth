@@ -97,7 +97,7 @@ PRIMARY KEY ( `id` )
 ) ENGINE = InnoDB 
 }}}
 
-== radioconfigs ==
+== radios ==
 This table lists radios that are allowed on the network, which rate they should be assigned, which access group (if any) they are in.
 
 || *Key* || *Name* || *Type* || *Description* ||
@@ -106,7 +106,7 @@ This table lists radios that are allowed on the network, which rate they should 
 || || rateplan || int(11) || rateplans.id of rate that SM is assigned to use ||
 
 {{{
- CREATE TABLE `jungleauth`.`radioconfigs` (
+ CREATE TABLE `jungleauth`.`radios` (
 `id` INT( 11 ) NOT NULL AUTO_INCREMENT ,
 `mac` VARCHAR( 12 ) NOT NULL ,
 `rateplan` INT( 11 ) NOT NULL ,
