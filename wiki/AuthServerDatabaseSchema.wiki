@@ -13,6 +13,7 @@ JungleAuth will only respond to a request from a AP if the source IP and AP MAC 
 || || macaddr || varchar(12) || AP MAC address ||
 || || ipaddr || varchat(15) || AP management IP address ||
 || || descr || text || Friendly name / hostname ||
+|| || rateoverride || int(11) || rateplan ID. See Rate Override below ||
 
 {{{
  CREATE TABLE `jungleauth`.`accesspoints` (
@@ -20,6 +21,7 @@ JungleAuth will only respond to a request from a AP if the source IP and AP MAC 
 `macaddr` VARCHAR( 12 ) NOT NULL ,
 `ipaddr` VARCHAR( 15 ) NOT NULL ,
 `descr` TEXT NOT NULL ,
+`rateoverride` INT( 11 ),
 PRIMARY KEY ( `id` ) ,
 UNIQUE (
 `macaddr` ,
@@ -28,47 +30,9 @@ UNIQUE (
 ) ENGINE = InnoDB 
 }}}
 
-
-== accessgroups ==
-Access groups are used restrict a rateplan or radio to a specific set of APs. This table holds access group definitions.
-
-|| *Key* || *Name* || *Type* || *Description* ||
-|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
-|| || name || varchar(20) || short name ||
-|| || descr || text || group description ||
-
-{{{
- CREATE TABLE `jungleauth`.`accessgroups` (
-`id` INT NOT NULL AUTO_INCREMENT ,
-`name` VARCHAR( 12 ) NOT NULL ,
-`descr` TEXT NOT NULL ,
-PRIMARY KEY ( `id` ) ,
-UNIQUE (
-`name`
-)
-) ENGINE = InnoDB 
-}}}
-
-==accessgroupaps==
-This table tracks AP membership in access groups.
-
-|| *Key* || *Name* || *Type* || *Description* ||
-|| _PK_ || id || int(11) || Internal ID number. Auto incerments ||
-|| _FK_ || groupid || int(11) || accessgroups.id of group that contains AP||
-|| _FK_ || apid || int(11) || accesspoints.id AP that belongs to group.||
-
-{{{
- CREATE TABLE `jungleauth`.`accessgroupaps` (
-`id` INT NOT NULL AUTO_INCREMENT ,
-`groupid` INT NOT NULL ,
-`apid` INT NOT NULL ,
-INDEX groupid_index( groupid ) ,
-INDEX apid_index( apid ) ,
-FOREIGN KEY ( groupid ) REFERENCES accessgroups( id ) ON DELETE RESTRICT ON UPDATE CASCADE ,
-FOREIGN KEY ( apid ) REFERENCES accesspoints( id ) ON DELETE RESTRICT ON UPDATE CASCADE ,
-PRIMARY KEY ( `id` )
-) ENGINE = InnoDB 
-}}}
+=== Rate Override ===
+If rate override is set JungleAuth will use the whichever rate is most restrictive, normal or override. 
+This option is intended to be used when you have a congested AP and need to reduce per-SM speeds to increase overall fairness. The slowest rate is selected to avoid a situation where a low speed subscriber could receive a possibly higher override speed.
 
 == rateplans ==
 A rate plan is a collection of bandwidth management parameters. A radio may be assigned to one rateplan at a time.
@@ -77,7 +41,6 @@ A rate plan is a collection of bandwidth management parameters. A radio may be a
 || _PK_ || id || int(11) || Internal ID number. Auto incerments ||
 || ||name || varchar(20) || short name||
 || ||descr|| text || description ||
-|| || accessgroup || int(11) || Access group to require, if any. Default is NULL ||
 || || upspeed || int(5) || Upload speed in Kbps ||
 || || downspeed || int(5) || Download speed in Kbps ||
 || || upbucket || int(10) || Upload bucket size in Kb ||
@@ -88,7 +51,6 @@ A rate plan is a collection of bandwidth management parameters. A radio may be a
 `id` INT NOT NULL AUTO_INCREMENT ,
 `name` VARCHAR( 20 ) NOT NULL ,
 `descr` TEXT NOT NULL ,
-`accessgroup` INT( 11 ) NULL ,
 `upspeed` INT( 5 ) NOT NULL ,
 `downspeed` INT( 5 ) NOT NULL ,
 `upbucket` INT( 10 ) NOT NULL ,
