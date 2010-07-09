@@ -102,14 +102,13 @@ class Main {
       # try to connect to database
       if ($validError == 0) {
         if ($section eq 'authdb') {
-          my $dbh = DBI->connect($dsn, $user, $pass);
+          my $dbh = DBI->connect($dsn, $user, $pass) or die "Could not connect to authdb";
           $self->_authhandle($dbh); 
         } elsif ($section eq 'logdb') {
-          my $dbh = DBI->connect($dsn, $user, $pass);
+          my $dbh = DBI->connect($dsn, $user, $pass) or die "Could not connect to logdb";
           $self->_loghandle($dbh);
         }
       }
-      
     }
 
     if ($validError > 0) {
