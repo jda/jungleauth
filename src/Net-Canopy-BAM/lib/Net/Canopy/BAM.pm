@@ -112,19 +112,6 @@ sub parseQstr {
 	return \%qhash;
 }
 
-=head3 idPacket
-
-	my $packetID = $ncb->idPacket(packet => $packet);
-	
-Returns the type of BAM packet. 
-
-=cut
-
-# Return type of packet recieved
-sub idPacket {
-
-}
-
 =head3 mkAcceptPacket
 
 	my $packet = $ncb->mkAcceptPacket(
@@ -188,6 +175,50 @@ sub mkRejectPacket {
 
 Identify packet and parse out data. Returns packet type and data as hashref
 
+=head4 Packet types
+
+=over
+
+=item authreq
+
+Authentication request from AP
+
+=over
+
+=item type - packet type
+
+=item sm - SM MAC address
+
+=item ap - AP MAC address
+
+=item luid - SM LUID on AP
+
+=item seq - Packet sequence number
+
+=back
+
+=item authchal-1
+
+Authentication challange from AP
+
+=item authchal-2
+
+Second Authentication challange from AP
+
+=item authgrant
+
+Authentication grant
+
+=item unknown-45
+
+Unknown Type 45
+
+=item unknown-46
+
+Unknown Type 46
+
+=back
+
 =cut
 
 sub parsePacket {
@@ -246,7 +277,7 @@ Jonathan Auer, E<lt>jda@tapodi.netE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-  Copyright (C) 2008 by Jonathan Auer
+  Copyright (C) 2010 by Jonathan Auer
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
