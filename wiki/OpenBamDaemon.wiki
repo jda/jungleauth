@@ -1,0 +1,14 @@
+#summary Instructions for using open-bam-daemon.pl
+
+= Introduction =
+
+open-bam-daemon.pl provides a drop-in replacement for the engine/backend component of the Motorola BAM 2.0 software.
+
+= Prerequisites =
+ * Motorola BAM 2.0 server using MySQL as the backend database.
+ * [http://fallabs.com/kyotocabinet/ KyotoCabinet] Database library.
+
+= Installation =
+
+
+= Operation =
