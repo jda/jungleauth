@@ -27,8 +27,8 @@ use Net::Canopy::BAM;
 use Config::INI::Reader;
 
 # Handle startup init tasks
-if (@ARGV != 1) {
-  print "Usage: $0 BAM-sse.conf\n";
+if (@ARGV != 2) {
+  print "Usage: $0 BAM-sse.conf LOCAL.IP.ADDR.HERE\n";
   exit(1);
 }
 
@@ -154,7 +154,7 @@ sub server_start {
   my $socket = IO::Socket::INET->new(
     Proto     => 'udp',
     LocalPort => '1234',
-    LocalHost => '209.242.224.17',
+    LocalHost => $ARGV[1],
   );
   die "Couldn't create server socket: $@" unless $socket;
   $kernel->select_read($socket, "get_datagram");
