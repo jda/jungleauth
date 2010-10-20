@@ -20,6 +20,7 @@ use strict;
 
 use POE;
 use POE::Component::SimpleDBI;
+use POE::Component::Daemon;
 
 use IO::Socket::INET;
 use Net::Canopy::BAM;
@@ -52,6 +53,8 @@ if (!$seencache->open($cachedbname,
 my $ncb = Net::Canopy::BAM->new();
 
 POE::Component::SimpleDBI->new('SimpleDBI') or die 'Unable to create DBI session';
+
+POE::Component::Daemon->spawn(detach=>1, max_children=>3);
 
 POE::Session->create(
   inline_states => {
@@ -86,6 +89,7 @@ POE::Session->create(
     confirm_auth  => \&confirm_auth,
   }
 );
+
 POE::Kernel->run();
 exit;
 
@@ -171,6 +175,7 @@ sub server_start {
     LocalHost => $bindIP,
   );
   die "Couldn't create server socket: $@" unless $socket;
+  
   $kernel->select_read($socket, "get_datagram");
 }
 
