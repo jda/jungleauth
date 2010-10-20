@@ -26,9 +26,6 @@ use Net::Canopy::BAM;
 
 use Config::INI::Reader;
 
-use Tie::Hash;
-use Data::Dumper;
-
 # Handle startup init tasks
 if (@ARGV != 1) {
   print "Usage: $0 BAM-sse.conf\n";
@@ -38,8 +35,9 @@ if (@ARGV != 1) {
 my $config = Config::INI::Reader->read_file($ARGV[0]);
 $config = $config->{client};
 
-
 my $ncb = Net::Canopy::BAM->new();
+my %seencache; # Cache of SMs that have authed for unknown-45 support
+
 POE::Component::SimpleDBI->new('SimpleDBI') or die 'Unable to create DBI session';
 
 POE::Session->create(
@@ -72,6 +70,7 @@ POE::Session->create(
     get_datagram  => \&server_read,
     auth_request  => \&auth_request,
     auth_response => \&auth_response,
+    confirm_auth  => \&confirm_auth,
   }
 );
 POE::Kernel->run();
@@ -81,31 +80,60 @@ exit;
 sub auth_response {
   my ($kernel, $dbres) = @_[KERNEL, ARG0];
   my $data = delete($dbres->{BAGGAGE});
+  $data->{qos} = $dbres->{RESULT}->{qos};
 
   my $resp;
 
-  if ($dbres->{RESULT}) {
+  if ($dbres->{RESULT}->{qos}) {
+    $seencache{$data->{sm}} = $data;
     $resp = $ncb->mkAcceptPacket(
       seq => $data->{seq},
       mac => $data->{sm},
-      qos => $dbres->{RESULT}->{qos},
+      qos => $data->{qos},
     );
   } else {
+    delete($seencache{$data->{sm}});
     $resp = $ncb->mkRejectPacket(
       seq => $data->{seq},
       mac => $data->{sm},
     );
   }
-
+  
   my $respsock = new IO::Socket::INET->new(
     PeerPort  => 61001,
     Proto     => 'udp',
     PeerAddr  => $data->{apip},
+    LocalAddr => $data->{myip},
     LocalPort => 61001,
-  ) or warn "Could not create reply socket";
-  
-  if ($respsock) {
+  ) or die "Could not create reply socket: $@\n";
+  $respsock->send($resp);
+}
+
+# Handle unknown-45 request
+sub confirm_auth {
+  my ($kernel, $data) = @_[KERNEL, ARG0];
+  my $sm = $data->{sm};
+
+  if ($seencache{$sm}) {
+    my $resp;
+
+    $resp = $ncb->mkAcceptPacket(
+      seq => $seencache{$sm}{seq},
+      mac => $seencache{$sm}{sm},
+      qos => $seencache{$sm}{qos},
+    );
+
+    my $respsock = new IO::Socket::INET->new(
+      PeerPort  => 61001,
+      Proto     => 'udp',
+      PeerAddr  => $data->{apip},
+      LocalAddr => $data->{myip},
+      LocalPort => 61001,
+    ) or die "Could not create reply socket: $@";
     $respsock->send($resp);
+  } else {
+    $data->{seq} = 0;
+    $kernel->post($_[SESSION], 'auth_request', $data);
   }
 }
 
@@ -113,7 +141,7 @@ sub auth_response {
 sub auth_request {
   my ($kernel, $data) = @_[KERNEL, ARG0];
   $kernel->post('SimpleDBI', 'SINGLE',
-    'SQL'          => 'SELECT qos FROM SS WHERE esn = ?',
+    'SQL'          => 'SELECT qos FROM SS WHERE esn = ? AND ENABLE = 1',
     'PLACEHOLDERS' => [$data->{sm}],
     'EVENT'        => 'auth_response',
     'BAGGAGE'      => $data,
@@ -126,8 +154,9 @@ sub server_start {
   my $socket = IO::Socket::INET->new(
     Proto     => 'udp',
     LocalPort => '1234',
+    LocalHost => '209.242.224.17',
   );
-  die "Couldn't create server socket: $!" unless $socket;
+  die "Couldn't create server socket: $@" unless $socket;
   $kernel->select_read($socket, "get_datagram");
 }
 
@@ -136,12 +165,15 @@ sub server_read {
   my $data;
 
   $socket->recv($data, 20);
-  my $apIP = $socket->peerhost();
 
   $data = $ncb->parsePacket(packet => $data);
+  $data->{apip} = $socket->peerhost();
+  $data->{myip} = $socket->sockhost();
+
   if ($data->{type} eq 'authreq') {
-      $data->{apip} = $apIP;
-      $kernel->post($_[SESSION], 'auth_request', $data);
-  }
+    $kernel->post($_[SESSION], 'auth_request', $data);
+  } elsif ($data->{type} eq 'unknown-45') {
+    $kernel->post($_[SESSION], 'confirm_auth', $data);  
+  } 
 }
 
