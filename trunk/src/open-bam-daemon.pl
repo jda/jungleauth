@@ -26,17 +26,30 @@ use Net::Canopy::BAM;
 
 use Config::INI::Reader;
 
+use KyotoCabinet;
+use JSON::XS;
+
 # Handle startup init tasks
-if (@ARGV != 2) {
-  print "Usage: $0 BAM-sse.conf LOCAL.IP.ADDR.HERE\n";
+if (@ARGV != 3) {
+  print "Usage: $0 BAM-sse.conf auth-cache.kch USE.THIS.IP.ADDR\n";
   exit(1);
 }
 
-my $config = Config::INI::Reader->read_file($ARGV[0]);
+my $configfile = $ARGV[0];
+my $cachedbname = $ARGV[1];
+my $bindIP = $ARGV[2];
+
+my $config = Config::INI::Reader->read_file($configfile);
 $config = $config->{client};
 
+my $seencache = new KyotoCabinet::DB;
+if (!$seencache->open($cachedbname, 
+  $seencache->OWRITER | $seencache->OCREATE| $seencache->OAUTOSYNC)) {
+    print "Could not open cache database: " . $seencache->error() . "\n";
+    exit(1);
+}
+
 my $ncb = Net::Canopy::BAM->new();
-my %seencache; # Cache of SMs that have authed for unknown-45 support
 
 POE::Component::SimpleDBI->new('SimpleDBI') or die 'Unable to create DBI session';
 
@@ -85,14 +98,14 @@ sub auth_response {
   my $resp;
 
   if ($dbres->{RESULT}->{qos}) {
-    $seencache{$data->{sm}} = $data;
+    $seencache->set($data->{sm}, encode_json($data));
     $resp = $ncb->mkAcceptPacket(
       seq => $data->{seq},
       mac => $data->{sm},
       qos => $data->{qos},
     );
   } else {
-    delete($seencache{$data->{sm}});
+    $seencache->remove($data->{sm});
     $resp = $ncb->mkRejectPacket(
       seq => $data->{seq},
       mac => $data->{sm},
@@ -114,13 +127,14 @@ sub confirm_auth {
   my ($kernel, $data) = @_[KERNEL, ARG0];
   my $sm = $data->{sm};
 
-  if ($seencache{$sm}) {
+  if (my $jdata = $seencache->get($sm)) {
+    $data = decode_json($jdata);
     my $resp;
-
+    
     $resp = $ncb->mkAcceptPacket(
-      seq => $seencache{$sm}{seq},
-      mac => $seencache{$sm}{sm},
-      qos => $seencache{$sm}{qos},
+      seq => $data->{seq},
+      mac => $data->{sm},
+      qos => $data->{qos},
     );
 
     my $respsock = new IO::Socket::INET->new(
@@ -154,7 +168,7 @@ sub server_start {
   my $socket = IO::Socket::INET->new(
     Proto     => 'udp',
     LocalPort => '1234',
-    LocalHost => $ARGV[1],
+    LocalHost => $bindIP,
   );
   die "Couldn't create server socket: $@" unless $socket;
   $kernel->select_read($socket, "get_datagram");
