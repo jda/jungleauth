@@ -6,7 +6,6 @@ open-bam-daemon.pl provides a drop-in replacement for the engine/backend compone
 
 = Prerequisites =
  * Motorola BAM 2.0 server database (tested with MySQL. May work with Postgres)
- * [http://fallabs.com/kyotocabinet/ KyotoCabinet] Database library.
  * The following perl modules available from CPAN
   * POE
   * POE::Component::SimpleDBI
@@ -14,9 +13,6 @@ open-bam-daemon.pl provides a drop-in replacement for the engine/backend compone
   * IO::Socket::INET
   * Net::Canopy::BAM
   * Config::INI::Reader
-  * JSON::XS
- * The following perl module not on CPAN
-  * !KyotoCabinet source package for perl
 
 = Installation =
 
