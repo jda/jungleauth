@@ -27,28 +27,17 @@ use Net::Canopy::BAM;
 
 use Config::INI::Reader;
 
-use KyotoCabinet;
-use JSON::XS;
-
 # Handle startup init tasks
-if (@ARGV != 3) {
-  print "Usage: $0 BAM-sse.conf auth-cache.kch USE.THIS.IP.ADDR\n";
+if (@ARGV != 2) {
+  print "Usage: $0 BAM-sse.conf USE.THIS.IP.ADDR\n";
   exit(1);
 }
 
 my $configfile = $ARGV[0];
-my $cachedbname = $ARGV[1];
-my $bindIP = $ARGV[2];
+my $bindIP = $ARGV[1];
 
 my $config = Config::INI::Reader->read_file($configfile);
 $config = $config->{client};
-
-my $seencache = new KyotoCabinet::DB;
-if (!$seencache->open($cachedbname, 
-  $seencache->OWRITER | $seencache->OCREATE| $seencache->OAUTOSYNC)) {
-    print "Could not open cache database: " . $seencache->error() . "\n";
-    exit(1);
-}
 
 my $ncb = Net::Canopy::BAM->new();
 
@@ -102,14 +91,12 @@ sub auth_response {
   my $resp;
 
   if ($dbres->{RESULT}->{qos}) {
-    $seencache->set($data->{sm}, encode_json($data));
     $resp = $ncb->mkAcceptPacket(
       seq => $data->{seq},
       mac => $data->{sm},
       qos => $data->{qos},
     );
   } else {
-    $seencache->remove($data->{sm});
     $resp = $ncb->mkRejectPacket(
       seq => $data->{seq},
       mac => $data->{sm},
@@ -126,33 +113,21 @@ sub auth_response {
   $respsock->send($resp);
 }
 
-# Handle unknown-45 request
+# Handle auth verification request
 sub confirm_auth {
   my ($kernel, $data) = @_[KERNEL, ARG0];
-  my $sm = $data->{sm};
-
-  if (my $jdata = $seencache->get($sm)) {
-    $data = decode_json($jdata);
-    my $resp;
+  my $token = $data->{token};
+  
+  my $resp = $ncb->mkConfirmPacket($token);
     
-    $resp = $ncb->mkAcceptPacket(
-      seq => $data->{seq},
-      mac => $data->{sm},
-      qos => $data->{qos},
-    );
-
-    my $respsock = new IO::Socket::INET->new(
-      PeerPort  => 61001,
-      Proto     => 'udp',
-      PeerAddr  => $data->{apip},
-      LocalAddr => $data->{myip},
-      LocalPort => 61001,
-    ) or die "Could not create reply socket: $@";
-    $respsock->send($resp);
-  } else {
-    $data->{seq} = 0;
-    $kernel->post($_[SESSION], 'auth_request', $data);
-  }
+  my $respsock = new IO::Socket::INET->new(
+    PeerPort  => 61001,
+    Proto     => 'udp',
+    PeerAddr  => $data->{apip},
+    LocalAddr => $data->{myip},
+    LocalPort => 61001,
+  ) or die "Could not create reply socket: $@";
+  $respsock->send($resp);
 }
 
 # Handle authentication request
@@ -191,7 +166,7 @@ sub server_read {
 
   if ($data->{type} eq 'authreq') {
     $kernel->post($_[SESSION], 'auth_request', $data);
-  } elsif ($data->{type} eq 'unknown-45') {
+  } elsif ($data->{type} eq 'authverify') {
     $kernel->post($_[SESSION], 'confirm_auth', $data);  
   } 
 }
