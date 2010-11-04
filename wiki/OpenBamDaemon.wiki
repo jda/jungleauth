@@ -15,6 +15,10 @@ open-bam-daemon.pl provides a drop-in replacement for the engine/backend compone
   * Config::INI::Reader
 
 = Installation =
-
+ * Download the latest open-bam-daemon.pl from the Downloads tab on this site.
+ * Install the perl components listed above
+ * mark open-bam-daemon.pl as executable: chmod +x open-bam-daemon.pl
 
 = Operation =
+ * Locate the sse.conf file on your BAM server
+ * Run the open bam daemon: ./open-bam-daemon.pl /path/to/sse.conf server_IP_address_to_use
