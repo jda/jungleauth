@@ -1,3 +1,5 @@
+CREATE DATABASE `freebam`;
+USE freebam;
 CREATE TABLE `sm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mac` varchar(16) NOT NULL,
