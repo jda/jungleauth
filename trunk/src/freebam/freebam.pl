@@ -29,7 +29,7 @@ use Config::INI::Reader;
 
 # Handle startup init tasks
 if (@ARGV != 2) {
-  print "Usage: $0 open-bam.ini USE.THIS.IP.ADDR\n";
+  print "Usage: $0 freebam.ini USE.THIS.IP.ADDR\n";
   exit(1);
 }
 
@@ -37,19 +37,19 @@ my $configfile = $ARGV[0];
 my $bindIP = $ARGV[1];
 
 my $config = Config::INI::Reader->read_file($configfile);
-$config = $config->{client};
+$config = $config->{freebam};
 
 my $ncb = Net::Canopy::BAM->new();
 
 POE::Component::SimpleDBI->new('SimpleDBI') or die 'Unable to create DBI session';
 
-POE::Component::Daemon->spawn(detach=>1, max_children=>3);
+POE::Component::Daemon->spawn(detach=>$config->{detach}, max_children=>3);
 
 POE::Session->create(
   inline_states => {
     _start => sub {
       $_[KERNEL]->post('SimpleDBI', 'CONNECT',
-        'DSN'         => "DBI:mysql:database=04004SSE;host=$config->{sqlhost};port=3306",
+        'DSN'         => "DBI:mysql:database=$config->{database};host=$config->{host};port=3306",
         'USERNAME'    => $config->{user},
         'PASSWORD'    => $config->{password},
         'NOW'         => 1,
@@ -86,15 +86,22 @@ exit;
 sub auth_response {
   my ($kernel, $dbres) = @_[KERNEL, ARG0];
   my $data = delete($dbres->{BAGGAGE});
-  $data->{qos} = $dbres->{RESULT}->{qos};
+  $data->{res} = $dbres->{RESULT};
 
   my $resp;
 
-  if ($dbres->{RESULT}->{qos}) {
+  if ($data->{res}) {
+    my $qos = $ncb->buildQstr(
+      upspeed => $data->{res}->{sup},
+      downspeed => $data->{res}->{sdown},
+      upbucket => $data->{res}->{bup},
+      downbucket => $data->{res}->{bdown}
+    );
+
     $resp = $ncb->mkAcceptPacket(
       seq => $data->{seq},
       mac => $data->{sm},
-      qos => $data->{qos},
+      qos => $qos,
     );
   } else {
     $resp = $ncb->mkRejectPacket(
@@ -134,7 +141,7 @@ sub confirm_auth {
 sub auth_request {
   my ($kernel, $data) = @_[KERNEL, ARG0];
   $kernel->post('SimpleDBI', 'SINGLE',
-    'SQL'          => 'SELECT qos FROM SS WHERE esn = ? AND ENABLE = 1',
+    'SQL'          => 'SELECT sup, sdown, bup, bdown FROM sm WHERE mac = ? AND active = 1',
     'PLACEHOLDERS' => [$data->{sm}],
     'EVENT'        => 'auth_response',
     'BAGGAGE'      => $data,
