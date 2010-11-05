@@ -16,10 +16,12 @@ FreeBAM provides a Canopy authentication server.
    * Config::INI::Reader
 
 = Installation =
- * Download the latest open-bam-daemon.pl from the Downloads tab on this site.
+ * Download the latest freebam from the Downloads tab on this site.
  * Install the perl components listed above
- * mark open-bam-daemon.pl as executable: chmod +x open-bam-daemon.pl
+ * Unpack the freebam distribute: tar -xzvf freebam-ver.tgz
+ * mark freebam.pl as executable: chmod +x freebam.pl
 
 = Operation =
- * Locate the sse.conf file on your BAM server
- * Run the open bam daemon: ./open-bam-daemon.pl /path/to/sse.conf server_IP_address_to_use
+ * Change the settings in freebam.ini to match your database server.
+ * run the SQL in freebam.sql on your MySQL server to create the database
+ * Run the free(dom) BAM daemon: ./freebam.pl freebam.ini IP_ADDR_TO_USE
