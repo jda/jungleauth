@@ -39,6 +39,12 @@ my $bindIP = $ARGV[1];
 my $config = Config::INI::Reader->read_file($configfile);
 $config = $config->{freebam};
 
+my $debug = 0;
+if (exists($config->{debug}) and $config->{debug} == 1) {
+  $debug = 1;
+  print "Running in debug mode\n";
+}
+
 my $ncb = Net::Canopy::BAM->new();
 
 POE::Component::SimpleDBI->new('SimpleDBI') or die 'Unable to create DBI session';
@@ -91,6 +97,10 @@ sub auth_response {
   my $resp;
 
   if ($data->{res}) {
+    if ($debug == 1) {
+      print "Allowing " . $data->{sm} . " on " . $data->{apip} . "\n";
+    }
+
     my $qos = $ncb->buildQstr(
       upspeed => $data->{res}->{sup},
       downspeed => $data->{res}->{sdown},
@@ -104,6 +114,10 @@ sub auth_response {
       qos => $qos,
     );
   } else {
+    if ($debug == 1) {
+      print "Rejecting " . $data->{sm} . " on " . $data->{apip} . "\n";
+    }
+
     $resp = $ncb->mkRejectPacket(
       seq => $data->{seq},
       mac => $data->{sm},
